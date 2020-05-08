@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 import 'package:clima/services/weather.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LocationScreen extends StatefulWidget {
   LocationScreen({this.locationWeather});
@@ -25,12 +26,26 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   void updateUI(dynamic weatherData) {
-    double temp = weatherData['main']['temp'];
-    temperature = temp.toInt();
-    var condition = weatherData['weather'][0]['id'];
-    weatherIcon = weather.getWeatherIcon(condition);
-    weatherText = weather.getMessage(temperature);
-    cityName = weatherData['name'];
+    setState(() {
+      if (weatherData == null) {
+        temperature = 0;
+        weatherIcon = 'Error';
+        weatherText = 'Unable to get weather data';
+        cityName = 'Unknown';
+        Alert(
+            context: context,
+            title: 'Error',
+            desc: 'Unable to get weather data, please restart the app');
+        return;
+      } else {
+        double temp = weatherData['main']['temp'];
+        temperature = temp.toInt();
+        var condition = weatherData['weather'][0]['id'];
+        weatherIcon = weather.getWeatherIcon(condition);
+        weatherText = weather.getMessage(temperature);
+        cityName = weatherData['name'];
+      }
+    });
   }
 
   @override
